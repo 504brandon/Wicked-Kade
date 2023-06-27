@@ -39,8 +39,8 @@ class MusicBeatSubstate extends FlxSubState
 		trackedinputs = controls.trackedinputs;
 		controls.trackedinputs = [];
 
-		/*#if android
-		controls.addAndroidBack();
+		/*#if mobile
+		controls.addmobileBack();
 		#end*/
 	}
 

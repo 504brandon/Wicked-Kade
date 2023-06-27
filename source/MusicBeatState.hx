@@ -43,8 +43,8 @@ class MusicBeatState extends FlxUIState
 		trackedinputs = controls.trackedinputs;
 		controls.trackedinputs = [];
 
-		/*#if android
-		controls.addAndroidBack();
+		/*#if mobile
+		controls.addmobileBack();
 		#end*/
 	}
 

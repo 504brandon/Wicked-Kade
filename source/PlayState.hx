@@ -65,7 +65,6 @@ import mobile.Mobilecontrols;
 #if windows
 import Discord.DiscordClient;
 import Sys;
-import sys.FileSystem;
 #end
 
 using StringTools;
@@ -99,7 +98,6 @@ class PlayState extends MusicBeatState
 
 	var songLength:Float = 0;
 	var versionWatermark:FlxText;
-	var songWatermark:FlxText;
 
 	#if windows
 	// Discord RPC variables
@@ -1009,10 +1007,11 @@ class PlayState extends MusicBeatState
 			songPosBar.createFilledBar(FlxColor.GRAY, FlxColor.LIME);
 			add(songPosBar);
 
-			var songName = new FlxText(songPosBG.x + (songPosBG.width / 2) - (SONG.song.length * 5), songPosBG.y, 0, SONG.song, 16);
+			var songName = new FlxText(0, songPosBG.y, FlxG.width, SONG.song, 16);
 			if (PlayStateChangeables.useDownscroll)
 				songName.y -= 3;
-			songName.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			songName.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			songName.screenCenter(X);
 			songName.scrollFactor.set();
 			add(songName);
 			songName.cameras = [camHUD];
@@ -1031,45 +1030,6 @@ class PlayState extends MusicBeatState
 		healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33);
 		add(healthBar);
 
-		versionWatermark = new FlxText(4, #if mobileC "KE Android " + Application.current.meta.get('version') #else "Kade Engine 1.5.4" #end, 16);
-		songWatermark = new FlxText(4, healthBarBG.y + 50, 0, SONG.song + " - " + CoolUtil.difficultyFromInt(storyDifficulty), 16);
-
-		versionWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		songWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-
-		versionWatermark.scrollFactor.set();
-		songWatermark.scrollFactor.set();
-
-		versionWatermark.y = FlxG.height * 0.91 + 28;
-		songWatermark.y = FlxG.height * 0.91 + 45;
-
-		if (FlxG.save.data.watermark)
-			add(versionWatermark);
-		add(songWatermark);
-
-		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
-		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		scoreTxt.scrollFactor.set();
-		add(scoreTxt);
-
-		replayTxt = new FlxText(healthBarBG.x + healthBarBG.width / 2 - 75, healthBarBG.y + (PlayStateChangeables.useDownscroll ? 100 : -100), 0, "REPLAY",
-			20);
-		replayTxt.setFormat(Paths.font("vcr.ttf"), 42, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		replayTxt.borderSize = 4;
-		replayTxt.borderQuality = 2;
-		replayTxt.scrollFactor.set();
-		if (loadRep)
-			add(replayTxt);
-
-		botPlayState = new FlxText(healthBarBG.x + healthBarBG.width / 2 - 75, healthBarBG.y + (PlayStateChangeables.useDownscroll ? 100 : -100), 0,
-			"BOTPLAY", 20);
-		botPlayState.setFormat(Paths.font("vcr.ttf"), 42, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		botPlayState.scrollFactor.set();
-		botPlayState.borderSize = 4;
-		botPlayState.borderQuality = 2;
-		if (PlayStateChangeables.botPlay && !loadRep)
-			add(botPlayState);
-
 		iconP1 = new HealthIcon(SONG.player1, true);
 		iconP1.y = healthBar.y - (iconP1.height / 2);
 		add(iconP1);
@@ -1077,6 +1037,43 @@ class PlayState extends MusicBeatState
 		iconP2 = new HealthIcon(SONG.player2, false);
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 		add(iconP2);
+
+		versionWatermark = new FlxText(4, 0, FlxG.width,
+			"Kade Engine Modified V:"
+			+ Application.current.meta.get('version')
+			+ "\n"
+			+ SONG.song
+			+ " - "
+			+ CoolUtil.difficultyFromInt(storyDifficulty), 16);
+		versionWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionWatermark.scrollFactor.set();
+		versionWatermark.y = FlxG.height * 0.91 + 28;
+		if (FlxG.save.data.watermark)
+			add(versionWatermark);
+
+		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
+		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scoreTxt.screenCenter(X);
+		scoreTxt.scrollFactor.set();
+		add(scoreTxt);
+
+		replayTxt = new FlxText(0, healthBarBG.y + (PlayStateChangeables.useDownscroll ? 100 : -100), FlxG.width, "REPLAY", 20);
+		replayTxt.setFormat(Paths.font("vcr.ttf"), 42, scoreTxt.color, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		replayTxt.borderSize = 4;
+		replayTxt.borderQuality = 2;
+		replayTxt.screenCenter(X);
+		replayTxt.scrollFactor.set();
+		if (loadRep)
+			add(replayTxt);
+
+		botPlayState = new FlxText(0, healthBarBG.y + (PlayStateChangeables.useDownscroll ? 100 : -100), FlxG.width, "BOTPLAY", 20);
+		botPlayState.setFormat(Paths.font("vcr.ttf"), 42, scoreTxt.color, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		botPlayState.screenCenter(X);
+		botPlayState.scrollFactor.set();
+		botPlayState.borderSize = 4;
+		botPlayState.borderQuality = 2;
+		if (PlayStateChangeables.botPlay && !loadRep)
+			add(botPlayState);
 
 		strumLineNotes.cameras = [camHUD];
 		notes.cameras = [camHUD];
@@ -1092,9 +1089,8 @@ class PlayState extends MusicBeatState
 			songPosBar.cameras = [camHUD];
 		}
 		versionWatermark.cameras = [camHUD];
-		songWatermark.cameras = [camHUD];
-		if (loadRep)
-			replayTxt.cameras = [camHUD];
+		replayTxt.cameras = [camHUD];
+		botPlayState.cameras = [camHUD];
 
 		#if mobileC
 		mcontrols = new Mobilecontrols();
@@ -1492,10 +1488,11 @@ class PlayState extends MusicBeatState
 			songPosBar.createFilledBar(FlxColor.GRAY, FlxColor.LIME);
 			add(songPosBar);
 
-			var songName = new FlxText(songPosBG.x + (songPosBG.width / 2) - (SONG.song.length * 5), songPosBG.y, 0, SONG.song, 16);
+			var songName = new FlxText(0, songPosBG.y, FlxG.width, SONG.song, 16);
 			if (PlayStateChangeables.useDownscroll)
 				songName.y -= 3;
-			songName.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			songName.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			songName.screenCenter(X);
 			songName.scrollFactor.set();
 			add(songName);
 
@@ -1558,32 +1555,6 @@ class PlayState extends MusicBeatState
 
 		var playerCounter:Int = 0;
 
-		// Per song offset check
-		#if windows
-		// pre lowercasing the song name (generateSong)
-		var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
-
-		var songPath = 'assets/data/' + songLowercase + '/';
-
-		for (file in sys.FileSystem.readDirectory(songPath))
-		{
-			var path = haxe.io.Path.join([songPath, file]);
-			if (!sys.FileSystem.isDirectory(path))
-			{
-				if (path.endsWith('.offset'))
-				{
-					trace('Found offset file: ' + path);
-					songOffset = Std.parseFloat(file.substring(0, file.indexOf('.off')));
-					break;
-				}
-				else
-				{
-					trace('Offset file not found. Creating one @: ' + songPath);
-					sys.io.File.saveContent(songPath + songOffset + '.offset', '');
-				}
-			}
-		}
-		#end
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 		for (section in noteData)
 		{
@@ -3128,7 +3099,6 @@ class PlayState extends MusicBeatState
 						{
 							if (mashViolations != 0)
 								mashViolations--;
-							scoreTxt.color = FlxColor.WHITE;
 							var noteDiff:Float = -(coolNote.strumTime - Conductor.songPosition);
 							anas[coolNote.noteData].hit = true;
 							anas[coolNote.noteData].hitJudge = Ratings.CalculateRating(noteDiff, Math.floor((PlayStateChangeables.safeFrames / 60) * 1000));

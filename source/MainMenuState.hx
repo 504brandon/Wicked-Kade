@@ -112,7 +112,7 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
 
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "FNF 0.2.7.1 | Kade Engine 1.5.4" #if mobileC + " | KE Android " + Application.current.meta.get('version') + " - Ported by TheLeerName" #else + " - Edited by TheLeerName " + "(" + Application.current.meta.get('version') + ")" #end, 12);
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "FNF 0.2.7.1 | Kade Engine 1.5.4" #if mobileC + " | KE mobile " + Application.current.meta.get('version') + " - Ported by TheLeerName" #else + " - Edited by TheLeerName " + "(" + Application.current.meta.get('version') + ")" #end, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -161,7 +161,7 @@ class MainMenuState extends MusicBeatState
 			if (controls.DOWN_P)
 				changeItem(1);
 
-			if (controls.BACK #if android || FlxG.android.justReleased.BACK #end)
+			if (controls.BACK #if mobile || FlxG.mobile.justReleased.BACK #end)
 				FlxG.switchState(new TitleState());
 
 			if (controls.ACCEPT)

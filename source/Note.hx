@@ -231,6 +231,9 @@ class Note extends FlxSprite
 	{
 		super.update(elapsed);
 
+		if (noteData < 0)
+			kill();
+
 		if (mustPress)
 		{
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early
@@ -244,23 +247,11 @@ class Note extends FlxSprite
 			}
 			else
 			{
-				/*if (PlayState.curStage == 'auditorHell') // these though, REALLY hard to hit.
-					{
-						if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 0.3)
-							&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.2)) // also they're almost impossible to hit late!
-							canBeHit = true;
-						else
-							canBeHit = false;
-					}
-					else
-					{ */
-				// make burning notes a lot harder to accidently hit because they're weirdchamp!
 				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 0.6)
 					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.4)) // also they're almost impossible to hit late!
 					canBeHit = true;
 				else
 					canBeHit = false;
-				// }
 			}
 			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset * Conductor.timeScale && !wasGoodHit)
 				tooLate = true;

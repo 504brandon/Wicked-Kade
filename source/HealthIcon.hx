@@ -1,6 +1,9 @@
 package;
 
+import openfl.Assets;
 import flixel.FlxSprite;
+
+using StringTools;
 
 class HealthIcon extends FlxSprite
 {
@@ -9,57 +12,34 @@ class HealthIcon extends FlxSprite
 	 */
 	public var sprTracker:FlxSprite;
 
-	private var iconOffsets:Array<Float> = [0, 0];
-
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		super();
 
-		loadGraphic(Paths.image('iconGrid'), true, 150, 150);
+		if (char == 'senpai-angry' || char == 'bf-car' || char == 'mom-car' || char == 'bf-holding-gf' || char == 'bf-christmas' || char == 'monster-christmas')//temp fix will change
+			char = char.split('-')[0];
+
+		if (Assets.exists(Paths.image('icons/icon-$char')))
+			loadGraphic(Paths.image('icons/icon-$char'), true, 150, 150);
+		else
+			loadGraphic(Paths.image('icons/icon-face'), true, 150, 150);
+		animation.add('icon', [0, 1], 0);
+		animation.play('icon');
+
+		if (isPlayer)
+			flipX = !flipX;
 
 		antialiasing = true;
-		animation.add('bf', [0, 1], 0, false, isPlayer);
-		animation.add('bf-car', [0, 1], 0, false, isPlayer);
-		animation.add('bf-christmas', [0, 1], 0, false, isPlayer);
-		animation.add('bf-pixel', [21, 21], 0, false, isPlayer);
-		animation.add('spooky', [2, 3], 0, false, isPlayer);
-		animation.add('pico', [4, 5], 0, false, isPlayer);
-		animation.add('mom', [6, 7], 0, false, isPlayer);
-		animation.add('mom-car', [6, 7], 0, false, isPlayer);
-		animation.add('tankman', [8, 9], 0, false, isPlayer);
-		animation.add('face', [10, 11], 0, false, isPlayer);
-		animation.add('dad', [12, 13], 0, false, isPlayer);
-		animation.add('senpai', [22, 22], 0, false, isPlayer);
-		animation.add('senpai-angry', [22, 22], 0, false, isPlayer);
-		animation.add('spirit', [23, 23], 0, false, isPlayer);
-		animation.add('bf-old', [14, 15], 0, false, isPlayer);
-		animation.add('gf', [16], 0, false, isPlayer);
-		animation.add('gf-christmas', [16], 0, false, isPlayer);
-		animation.add('gf-pixel', [16], 0, false, isPlayer);
-		animation.add('parents-christmas', [17, 18], 0, false, isPlayer);
-		animation.add('monster', [19, 20], 0, false, isPlayer);
-		animation.add('monster-christmas', [19, 20], 0, false, isPlayer);
-		animation.play(char);
-
-		iconOffsets[0] = (width - 150) / 2;
-		iconOffsets[1] = (width - 150) / 2;
 
 		updateHitbox();
 
 		switch (char)
 		{
-			case 'bf-pixel' | 'senpai' | 'senpai-angry' | 'spirit' | 'gf-pixel':
+			case 'bf-pixel' | 'senpai' | 'senpai-angry' | 'spirit':
 				antialiasing = false;
 		}
 
 		scrollFactor.set();
-	}
-
-	override function updateHitbox()
-	{
-		super.updateHitbox();
-		offset.x = iconOffsets[0];
-		offset.y = iconOffsets[1];
 	}
 
 	override function update(elapsed:Float)

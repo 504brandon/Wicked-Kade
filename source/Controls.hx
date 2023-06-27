@@ -312,8 +312,8 @@ class Controls extends FlxActionSet
 
 
 
-	/*#if android
-	public function addAndroidBack() {
+	/*#if mobile
+	public function addmobileBack() {
 		// fix this later
 
 		var BACK = #if (openfl >= "8.0.0") 0x4000010E #else 27 #end;

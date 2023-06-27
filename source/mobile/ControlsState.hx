@@ -165,7 +165,7 @@ class ControlsState extends MusicBeatSubstate
 	{
 		super.update(elapsed);
 
-		if (exitbutton.justReleased #if android || FlxG.android.justReleased.BACK #end)
+		if (exitbutton.justReleased #if mobile || FlxG.mobile.justReleased.BACK #end)
 			FlxG.switchState(new MainMenuState());
 
 		for (touch in FlxG.touches.list){
@@ -388,7 +388,7 @@ class ControlsState extends MusicBeatSubstate
 		if (curSelected != 3)
 			changeSelection(0,3);
 
-		var cbtext:String = Clipboard.text; // this not working on android 10 or higher
+		var cbtext:String = Clipboard.text;
 
 		if (!cbtext.endsWith("}")) return;
 

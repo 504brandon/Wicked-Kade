@@ -104,7 +104,7 @@ class Replay
 		var time = Date.now().getTime();
 
 		#if sys
-		File.saveContent("assets/replays/replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay", data);
+		//File.saveContent("assets/replays/replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay", data); (context: this is broken in the latest version of flixel fsm for me so i just commented it out i may fix it in a later pr)
 
 		path = "replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay"; // for score screen shit
 

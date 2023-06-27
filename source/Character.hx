@@ -499,6 +499,23 @@ class Character extends FlxSprite
 				addOffset("singDOWN-alt", -30, -27);
 
 				playAnim('idle');
+
+			default:
+				tex = Paths.getSparrowAtlas('characters/DADDY_DEAREST', 'shared');
+				frames = tex;
+				animation.addByPrefix('idle', 'Dad idle dance', 24);
+				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
+				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
+				animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
+				animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
+
+				addOffset('idle');
+				addOffset("singUP", -6, 50);
+				addOffset("singRIGHT", 0, 27);
+				addOffset("singLEFT", -10, 10);
+				addOffset("singDOWN", 0, -30);
+
+				playAnim('idle');
 		}
 
 		dance();
@@ -508,7 +525,7 @@ class Character extends FlxSprite
 			flipX = !flipX;
 
 			// Doesn't flip for BF, since his are already in the right place???
-			if (!curCharacter.startsWith('bf'))
+			if (!curCharacter.startsWith('bf') && frames != null && animation.curAnim.name != null && animation.curAnim != null)
 			{
 				// var animArray
 				var oldRight = animation.getByName('singRIGHT').frames;
@@ -528,9 +545,11 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf'))
+		super.update(elapsed);
+
+		if (!curCharacter.startsWith('bf') && frames != null && animation.curAnim.name != null && animation.curAnim != null)
 		{
-			if (animation.curAnim.name.startsWith('sing'))
+			if (animation.curAnim.name.startsWith('sing') && frames != null && animation.curAnim.name != null && animation.curAnim != null)
 				holdTimer += elapsed;
 
 			var dadVar:Float = 4;
@@ -539,7 +558,6 @@ class Character extends FlxSprite
 				dadVar = 6.1;
 			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
 			{
-				trace('dance');
 				dance();
 				holdTimer = 0;
 			}
@@ -548,11 +566,9 @@ class Character extends FlxSprite
 		switch (curCharacter)
 		{
 			case 'gf':
-				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
+				if (animation.curAnim.name == 'hairFall' && frames != null && animation.curAnim.finished && animation.curAnim.name != null && animation.curAnim != null)
 					playAnim('danceRight');
 		}
-
-		super.update(elapsed);
 	}
 
 	private var danced:Bool = false;
@@ -567,7 +583,7 @@ class Character extends FlxSprite
 			switch (curCharacter)
 			{
 				case 'gf':
-					if (!animation.curAnim.name.startsWith('hair'))
+					if (!animation.curAnim.name.startsWith('hair') && frames != null && animation.curAnim.name != null && animation.curAnim != null)
 					{
 						danced = !danced;
 
@@ -578,7 +594,7 @@ class Character extends FlxSprite
 					}
 
 				case 'gf-christmas':
-					if (!animation.curAnim.name.startsWith('hair'))
+					if (!animation.curAnim.name.startsWith('hair') && frames != null && animation.curAnim.name != null && animation.curAnim != null)
 					{
 						danced = !danced;
 
@@ -589,7 +605,7 @@ class Character extends FlxSprite
 					}
 
 				case 'gf-car':
-					if (!animation.curAnim.name.startsWith('hair'))
+					if (!animation.curAnim.name.startsWith('hair') && frames != null && animation.curAnim.name != null && animation.curAnim != null)
 					{
 						danced = !danced;
 
@@ -599,7 +615,7 @@ class Character extends FlxSprite
 							playAnim('danceLeft');
 					}
 				case 'gf-pixel':
-					if (!animation.curAnim.name.startsWith('hair'))
+					if (!animation.curAnim.name.startsWith('hair') && frames != null && animation.curAnim.name != null && animation.curAnim != null)
 					{
 						danced = !danced;
 
@@ -624,31 +640,38 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		animation.play(AnimName, Force, Reversed, Frame);
-
-		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
+		if (animation.exists(AnimName) && frames != null)
 		{
-			offset.set(daOffset[0], daOffset[1]);
+			animation.play(AnimName, Force, Reversed, Frame);
+
+			var daOffset = animOffsets.get(AnimName);
+			if (animOffsets.exists(AnimName))
+			{
+				offset.set(daOffset[0], daOffset[1]);
+			}
+			else
+				offset.set(0, 0);
+
+			if (curCharacter == 'gf')
+			{
+				if (AnimName == 'singLEFT')
+				{
+					danced = true;
+				}
+				else if (AnimName == 'singRIGHT')
+				{
+					danced = false;
+				}
+
+				if (AnimName == 'singUP' || AnimName == 'singDOWN')
+				{
+					danced = !danced;
+				}
+			}
 		}
 		else
-			offset.set(0, 0);
-
-		if (curCharacter == 'gf')
 		{
-			if (AnimName == 'singLEFT')
-			{
-				danced = true;
-			}
-			else if (AnimName == 'singRIGHT')
-			{
-				danced = false;
-			}
-
-			if (AnimName == 'singUP' || AnimName == 'singDOWN')
-			{
-				danced = !danced;
-			}
+			return;
 		}
 	}
 

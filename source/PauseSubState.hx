@@ -5,13 +5,10 @@ import openfl.Lib;
 #if windows
 import Discord.DiscordClient;
 #end
-import Controls.Control;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.keyboard.FlxKey;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -26,21 +23,10 @@ class PauseSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
-	var perSongOffset:FlxText;
-
-	var offsetChanged:Bool = false;
-	var startOffset:Float = PlayState.songOffset;
 
 	public function new(x:Float, y:Float)
 	{
 		super();
-
-		/*if (PlayState.instance.useVideo)
-			{
-				menuItems.remove("Resume");
-				if (GlobalVideo.get().playing)
-					GlobalVideo.get().pause();
-		}*/
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
@@ -80,19 +66,6 @@ class PauseSubState extends MusicBeatSubstate
 		grpMenuShit = new FlxTypedGroup<Alphabet>();
 		add(grpMenuShit);
 
-		#if windows
-		perSongOffset = new FlxText(5, FlxG.height
-			- 18, 0,
-			"Additive Offset (Left, Right): "
-			+ PlayState.songOffset
-			+ " - Description - "
-			+ 'Adds value to global offset, per song.', 12);
-		perSongOffset.scrollFactor.set();
-		perSongOffset.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-
-		add(perSongOffset);
-		#end
-
 		for (i in 0...menuItems.length)
 		{
 			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
@@ -102,10 +75,6 @@ class PauseSubState extends MusicBeatSubstate
 		}
 
 		changeSelection();
-
-		// #if mobileC
-		// addVirtualPad(UP_DOWN, A);
-		// #end
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 	}
@@ -117,131 +86,22 @@ class PauseSubState extends MusicBeatSubstate
 
 		super.update(elapsed);
 
-		/*if (PlayState.instance.useVideo)
-			menuItems.remove('Resume'); */
-
-		// pre lowercasing the song name (update)
-		#if windows
-		var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
-		#end
-
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 
 		var upP = controls.UP_P;
 		var downP = controls.DOWN_P;
-		#if windows
-		var leftP = controls.LEFT_P;
-		var rightP = controls.RIGHT_P;
-		var oldOffset:Float = 0;
-		var songPath = 'assets/data/' + songLowercase + '/';
-		#end
 		var accepted = controls.ACCEPT;
 
 		if (gamepad != null && KeyBinds.gamepad)
 		{
 			upP = gamepad.justPressed.DPAD_UP;
 			downP = gamepad.justPressed.DPAD_DOWN;
-			#if windows
-			leftP = gamepad.justPressed.DPAD_LEFT;
-			rightP = gamepad.justPressed.DPAD_RIGHT;
-			#end
 		}
 
 		if (upP)
 			changeSelection(-1);
 		else if (downP)
 			changeSelection(1);
-
-		#if windows
-		if (leftP)
-		{
-			oldOffset = PlayState.songOffset;
-			PlayState.songOffset -= 1;
-			sys.FileSystem.rename(songPath + oldOffset + '.offset', songPath + PlayState.songOffset + '.offset');
-			perSongOffset.text = "Additive Offset (Left, Right): "
-				+ PlayState.songOffset
-				+ " - Description - "
-				+ 'Adds value to global offset, per song.';
-			if (!offsetChanged)
-			{
-				grpMenuShit.clear();
-				menuItems = ['Restart Song', 'Exit to menu'];
-				for (i in 0...menuItems.length)
-				{
-					var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-					songText.isMenuItem = true;
-					songText.targetY = i;
-					grpMenuShit.add(songText);
-				}
-
-				changeSelection();
-
-				cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-				offsetChanged = true;
-			}
-			else if (PlayState.songOffset == startOffset)
-			{
-				grpMenuShit.clear();
-				menuItems = ['Resume', 'Restart Song', 'Exit to menu'];
-				for (i in 0...menuItems.length)
-				{
-					var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-					songText.isMenuItem = true;
-					songText.targetY = i;
-					grpMenuShit.add(songText);
-				}
-
-				changeSelection();
-
-				cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-				offsetChanged = false;
-			}
-		}
-		else if (rightP)
-		{
-			oldOffset = PlayState.songOffset;
-			PlayState.songOffset += 1;
-			sys.FileSystem.rename(songPath + oldOffset + '.offset', songPath + PlayState.songOffset + '.offset');
-			perSongOffset.text = "Additive Offset (Left, Right): "
-				+ PlayState.songOffset
-				+ " - Description - "
-				+ 'Adds value to global offset, per song.';
-			if (!offsetChanged)
-			{
-				grpMenuShit.clear();
-				menuItems = ['Restart Song', 'Exit to menu'];
-				for (i in 0...menuItems.length)
-				{
-					var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-					songText.isMenuItem = true;
-					songText.targetY = i;
-					grpMenuShit.add(songText);
-				}
-
-				changeSelection();
-
-				cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-				offsetChanged = true;
-			}
-			else if (PlayState.songOffset == startOffset)
-			{
-				grpMenuShit.clear();
-				menuItems = ['Resume', 'Restart Song', 'Exit to menu'];
-				for (i in 0...menuItems.length)
-				{
-					var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-					songText.isMenuItem = true;
-					songText.targetY = i;
-					grpMenuShit.add(songText);
-				}
-
-				changeSelection();
-
-				cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-				offsetChanged = false;
-			}
-		}
-		#end
 
 		if (accepted)
 		{
@@ -252,26 +112,13 @@ class PauseSubState extends MusicBeatSubstate
 				case "Resume":
 					close();
 				case "Restart song":
-					/*if (PlayState.instance.useVideo)
-						{
-							GlobalVideo.get().stop();
-							PlayState.instance.remove(PlayState.instance.videoSprite);
-							PlayState.instance.removedVideo = true;
-					}*/
 					FlxG.resetState();
 				case "Debug menu":
 					FlxG.switchState(new ChartingState());
-					// FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN,handleInput);
 					#if windows
 					DiscordClient.changePresence("Chart Editor", null, null, true);
 					#end
 				case "Exit to menu":
-					/*if (PlayState.instance.useVideo)
-						{
-							GlobalVideo.get().stop();
-							PlayState.instance.remove(PlayState.instance.videoSprite);
-							PlayState.instance.removedVideo = true;
-					}*/
 					if (PlayState.loadRep)
 					{
 						FlxG.save.data.botplay = false;

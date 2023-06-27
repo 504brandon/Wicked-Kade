@@ -151,7 +151,7 @@ class DialogueBox extends FlxSpriteGroup
 		// dialogue.x = 90;
 		// add(dialogue);
 	
-		#if android
+		#if mobile
 		skipB = new FlxUIButton((FlxG.width-140)-20,20,"Skip");
 		skipB.setLabelFormat("Nokia Cellphone FC Small", 25, 0xFF222222);
 		skipB.resize(140, 50);
@@ -194,8 +194,8 @@ class DialogueBox extends FlxSpriteGroup
 			var next:Bool;
 			var skip:Bool;
 
-			next = FlxG.keys.justPressed.SPACE #if android || invTouch.justPressed #end;
-			skip = FlxG.keys.justPressed.S #if android || skipB.justPressed #end;
+			next = FlxG.keys.justPressed.SPACE #if mobile || invTouch.justPressed #end;
+			skip = FlxG.keys.justPressed.S #if mobile || skipB.justPressed #end;
 
 			if (skip)
 			{

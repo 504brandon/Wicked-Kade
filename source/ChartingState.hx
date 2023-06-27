@@ -81,6 +81,8 @@ class ChartingState extends MusicBeatState
 	var _song:SwagSong;
 
 	var typingShit:FlxInputText;
+	var typingShit2:FlxInputText;
+
 	/*
 	 * WILL BE THE CURRENT / LAST PLACED NOTE
 	**/
@@ -142,8 +144,7 @@ class ChartingState extends MusicBeatState
 
 		blackBorder.alpha = 0.3;
 
-		snapText = new FlxText(40, 10, 0, "Snap: 1/" + snap + " (Press Control to unsnap the cursor)" + ")\nAdd Notes: 1-8 (or click)\n"
-			#if !mobileC + "Burning note - ALT + Click\n" #end, 14);
+		snapText = new FlxText(40, 10, 0, "Snap: 1/" + snap + " (Press Control to unsnap the cursor)" + ")\nAdd Notes: 1-8 (or click)\n", 14);
 		snapText.scrollFactor.set();
 
 		gridBlackLine = new FlxSprite(gridBG.x + gridBG.width / 2).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
@@ -381,8 +382,6 @@ class ChartingState extends MusicBeatState
 		});
 		noteStyleDropDown.selectedLabel = _song.noteStyle;
 
-		var noteStyleLabel = new FlxText(10, 280, 64, 'Note Skin');
-
 		var tab_group_song = new FlxUI(null, UI_box);
 		tab_group_song.name = "Song";
 		tab_group_song.add(UI_songTitle);
@@ -413,7 +412,6 @@ class ChartingState extends MusicBeatState
 		var tab_group_assets = new FlxUI(null, UI_box);
 		tab_group_assets.name = "Assets";
 		tab_group_assets.add(noteStyleDropDown);
-		tab_group_assets.add(noteStyleLabel);
 		tab_group_assets.add(gfVersionDropDown);
 		tab_group_assets.add(gfVersionLabel);
 		tab_group_assets.add(stageDropDown);
@@ -435,7 +433,6 @@ class ChartingState extends MusicBeatState
 	var check_changeBPM:FlxUICheckBox;
 	var stepperSectionBPM:FlxUINumericStepper;
 	var check_altAnim:FlxUICheckBox;
-	var burnNote:FlxUICheckBox;
 
 	function addSectionUI():Void
 	{
@@ -518,13 +515,13 @@ class ChartingState extends MusicBeatState
 
 		var applyLength:FlxButton = new FlxButton(10, 100, 'Apply Data');
 
-		burnNote = new FlxUICheckBox(10, 25, null, null, "Put burn note?", 100);
-		burnNote.checked = false;
-		tab_group_note.add(burnNote);
+		var noteType = new FlxUIInputText(10, applyLength.y + 20, 70, 'default', 8);
+		typingShit2 = noteType;
 
 		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(stepperSusLengthLabel);
 		tab_group_note.add(applyLength);
+		tab_group_note.add(noteType);
 
 		UI_box.addGroup(tab_group_note);
 	}
@@ -670,7 +667,7 @@ class ChartingState extends MusicBeatState
 			+ snap
 			+ " ("
 			+ (doSnapShit ? "Control to disable" : "Snap Disabled, Control to renable")
-			+ ")\nAdd Notes: 1-8 (or click)\n" #if !mobileC + "Burning note - ALT + Click\n" #end;
+			+ ")\nAdd Notes: 1-8 (or click)\n";
 
 		curStep = recalculateSteps();
 
@@ -820,7 +817,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		if (!typingShit.hasFocus)
+		if (!typingShit.hasFocus && !typingShit2.hasFocus)
 		{
 			if (FlxG.keys.pressed.CONTROL #if mobileC || key_ctrl.pressed #end)
 			{
@@ -1304,9 +1301,9 @@ class ChartingState extends MusicBeatState
 		var noteSus = 0;
 		var noteType = "";
 
+		noteType = typingShit2.text;
+
 		// combination of keys to put a custom notes
-		if (FlxG.keys.pressed.ALT || burnNote.checked)
-			noteType = "burning";
 
 		if (n != null)
 			_song.notes[curSection].sectionNotes.push([n.strumTime, n.noteData, n.sustainLength, n.noteType]);

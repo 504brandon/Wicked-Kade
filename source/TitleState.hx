@@ -50,10 +50,33 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		@:privateAccess
-		{
-			trace("Loaded " + openfl.Assets.getLibrary("default").assetsLoaded + " assets (DEFAULT)");
-		}
+		#if polymod
+		polymod.Polymod.init({
+			modRoot: "mods",
+			dirs: sys.FileSystem.readDirectory('./mods'),
+			errorCallback: (e) -> {
+				trace(e.message);
+			},
+			frameworkParams: {
+				assetLibraryPaths: [
+					"songs" => "assets/songs",
+					"images" => "assets/images",
+					"shared" => 'assets/shared',
+					"data" => "assets/data",
+					"fonts" => "assets/fonts",
+					"sounds" => "assets/sounds",
+					"music" => "assets/music",
+					"tutorial" => "assets/tutorial",
+					"week1" => "assets/week1",
+					"week2" => "assets/week2",
+					"week3" => "assets/week3",
+					"week4" => "assets/week4",
+					"week5" => 'assets/week5',
+					"week6" => 'assets/week6'
+				]
+			}
+		});
+		#end //hey idk if polymod works on mobile if it doesnt hit me up on discord at 504brandon (i have the new username system just add 504brandon) and i will get this fixed on mobile
 
 		PlayerSettings.init();
 
