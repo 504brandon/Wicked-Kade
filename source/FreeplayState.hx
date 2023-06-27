@@ -168,16 +168,19 @@ class FreeplayState extends MusicBeatState
 		if (controls.ACCEPT && !songSearch.hasFocus)
 		{
 			var songFormat = StringTools.replace(songs[curSelected].songName, " ", "-");
+
+			trace(songs[curSelected].songName);
+
 			var poop:String = Highscore.formatSong(songFormat, curDifficulty);
-			if (openfl.Assets.exists(Paths.json(songs[curSelected].songName + '/' + poop, 'data')))
-			{
-				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName);
-				PlayState.isStoryMode = false;
-				PlayState.storyDifficulty = curDifficulty;
-				PlayState.storyWeek = songs[curSelected].week;
-				trace('CUR WEEK' + PlayState.storyWeek);
-				LoadingState.loadAndSwitchState(new PlayState());
-			}
+
+			trace(poop);
+
+			PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName);
+			PlayState.isStoryMode = false;
+			PlayState.storyDifficulty = curDifficulty;
+			PlayState.storyWeek = songs[curSelected].week;
+			trace('CUR WEEK' + PlayState.storyWeek);
+			LoadingState.loadAndSwitchState(new PlayState());
 		}
 
 		if (songSearch.hasFocus && FlxG.keys.justPressed.ENTER)
@@ -273,8 +276,7 @@ class FreeplayState extends MusicBeatState
 					icon.destroy();
 				}
 
-				for (song in songs)
-				{
+				for (song in songs){
 					songs.remove(song);
 				}
 			}
@@ -287,30 +289,23 @@ class FreeplayState extends MusicBeatState
 			for (i in 0...initSonglist.length)
 			{
 				var data:Array<String> = initSonglist[i].split(':');
-				if (data[0].contains(songSearch.text.toLowerCase())
-					|| data[0].contains(songSearch.text.toUpperCase())
-					|| data[0].contains(songSearch.text))
-				{
+				if (data[0].contains(songSearch.text.toLowerCase()) || data[0].contains(songSearch.text.toUpperCase()) || data[0].contains(songSearch.text))
 					addSong(data[0], Std.parseInt(data[2]), data[1]);
-				}
+			}
 
-				if (songs == [] || songs == null || songs == [null])
-					FlxG.switchState(new MainMenuState()); // goober
+			for (i in 0...songs.length)
+			{
+				var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false, true);
+				songText.isMenuItem = true;
+				songText.targetY = i;
+				grpSongs.add(songText);
 
-				for (i in 0...songs.length)
-				{
-					var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false, true);
-					songText.isMenuItem = true;
-					songText.targetY = i;
-					grpSongs.add(songText);
+				var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+				icon.sprTracker = songText;
 
-					var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-					icon.sprTracker = songText;
-
-					// using a FlxGroup is too much fuss!
-					grpIcons.add(icon);
-					add(icon);
-				}
+				// using a FlxGroup is too much fuss!
+				grpIcons.add(icon);
+				add(icon);
 			}
 		}
 		else
